@@ -13,7 +13,9 @@
   "collaborator": [
       "Gold John King",
       "枕头啊枕头",
-      "Yincircle"
+      "Yincircle",
+      "yum",
+      "yiyule"
   ],
   "levelRequirements": [{
     "level": "1",
@@ -21,7 +23,7 @@
     "interval": "4",
     "downloaded": "50GB",
     "ratio": "1.05",
-    "privilege": "得到一个邀请名额；可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以发送邀请； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。"
+    "privilege": "可以直接发布种子；可以查看NFO文档；可以查看用户列表；可以请求续种； 可以查看排行榜；可以查看其它用户的种子历史(如果用户隐私等级未设置为\"强\")； 可以删除自己上传的字幕。"
   },{
     "level": "2",
     "name": "Elite User",
@@ -35,7 +37,7 @@
     "interval": "15",
     "downloaded": "300GB",
     "ratio": "2.05",
-    "privilege": "得到两个邀请名额；可以在做种/下载/发布的时候选择匿名模式。"
+    "privilege": "可以在做种/下载/发布的时候选择匿名模式。"
   },{
     "level": "4",
     "name": "Insane User",
@@ -49,7 +51,7 @@
     "interval": "40",
     "downloaded": "750GB",
     "ratio": "3.05",
-    "privilege": "得到三个邀请名额；可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。"
+    "privilege": "可以查看其它用户的评论、帖子历史。Veteran User及以上用户会永远保留账号。"
   },{
     "level": "6",
     "name": "Extreme User",
@@ -63,18 +65,18 @@
     "interval": "80",
     "downloaded": "1.5TB",
     "ratio": "4.05",
-    "privilege": "得到五个邀请名额。"
+    "privilege": ""
   },{
     "level": "8",
     "name": "Nexus Master",
     "interval": "100",
     "downloaded": "3TB",
     "ratio": "4.55",
-    "privilege": "得到十个邀请名额。"
+    "privilege": ""
   }],
   "plugins": [{
     "name": "阅听专区",
-    "pages": ["/live.php"],
+    "pages": ["/special.php"],
     "scripts": ["/schemas/NexusPHP/common.js", "/schemas/NexusPHP/torrents.js"]
   }],
   "searchEntryConfig": {
@@ -103,9 +105,28 @@
           "enabled": true
       },
       {
-          "entry": "live.php?search=$key$&notnewword=1",
+          "entry": "special.php?search=$key$&notnewword=1",
           "name": "阅听专区",
           "enabled": false
       }
-  ]
+  ],
+  "selectors": {
+    "userSeedingTorrents": {
+      "page": "/getusertorrentlistajax.php?userid=$user.id$&type=seeding",
+      "fields": {
+        "seeding": {
+          "selector": ["b:first"],
+          "filters": ["query.text()"]
+        },
+        "seedingSize": {
+          "selector": "",
+          "filters": [
+            "query.text().match(/总大小：(.*?)上一页/g)",
+            "(query && query.length>0) ? query[0].replace('总大小：', '').replace('<< 上一页', '').trim() : 0",
+            "(query != 0) ? query.sizeToNumber() : 0"
+          ]
+        }
+      }
+    }
+  }
 }

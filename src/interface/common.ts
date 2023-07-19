@@ -271,6 +271,7 @@ export interface Site {
   disableMessageCount?: boolean;
   // 等级要求
   levelRequirements?: LevelRequirement[];
+  upLoadLimit?: number;
 }
 
 export interface LevelRequirement {
@@ -309,7 +310,7 @@ export interface LevelRequirement {
   // 权限
   privilege?: string;
   // 可选要求
-  alternative?: LevelRequirement;
+  alternative?: LevelRequirement[];
 }
 
 export interface Request {
