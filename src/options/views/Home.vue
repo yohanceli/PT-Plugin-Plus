@@ -48,6 +48,8 @@
                 @change="updateViewOptions"></v-switch>
               <v-switch color="success" v-model="showHnR" :label="$t('home.showHnR')"
                 @change="updateViewOptions"></v-switch>
+              <v-switch color="success" v-model="showLastUpdateTimeAsRelativeTime" :label="$t('home.showLastUpdateTimeAsRelativeTime')"
+                @change="updateViewOptions"></v-switch>
             </v-container>
           </v-card>
         </v-menu>
@@ -405,10 +407,10 @@
           <td v-if="showColumn('user.joinTime')" class="number" :title="props.item.user.joinDateTime">
             {{ props.item.user.joinTime | timeAgo(showWeek) }}
           </td>
-          <td v-if="showColumn('user.lastUpdateTime')" class="number">
-            <v-btn depressed small class="lastUpdateTime"
-                   :to="`statistic/${props.item.host}`" :title="$t('home.statistic')">
-              {{ props.item.user.lastUpdateTime | formatDate("YYYY-MM-DD HH:mm:ss") }}
+          <td v-if="showColumn('user.lastUpdateTime')" class="center">
+            <v-btn depressed small :to="`statistic/${props.item.host}`" :title="props.item.user.lastUpdateTime | formatDate('YYYY-MM-DD HH:mm:ss') + ' ' + $t('home.statistic')">
+                <template v-if="showLastUpdateTimeAsRelativeTime">{{ props.item.user.lastUpdateTime | timeAgo(false) }}</template>
+                <template v-else>{{ props.item.user.lastUpdateTime | formatDate('YYYY-MM-DD HH:mm:ss') }}</template>
             </v-btn>
           </td>
           <td v-if="showColumn('user.lastUpdateStatus')" class="center">
@@ -526,7 +528,7 @@ export default Vue.extend({
         },
         {
           text: this.$t("home.headers.lastUpdateTime"),
-          align: "right",
+          align: "center",
           value: "user.lastUpdateTime",
         },
         {
@@ -554,6 +556,7 @@ export default Vue.extend({
       showSeedingPoints: true,
       // showUserUploads: false,
       showHnR: true,
+      showLastUpdateTimeAsRelativeTime:true,
       showWeek: false,
     };
   },
@@ -641,6 +644,7 @@ export default Vue.extend({
         showLevelRequirements: true,
         showSeedingPoints: true,
         showHnR: true,
+        showLastUpdateTimeAsRelativeTime:true,
         showWeek: false,
         selectedHeaders: this.selectedHeaders,
       });
@@ -1131,6 +1135,7 @@ export default Vue.extend({
           showSeedingPoints: this.showSeedingPoints,
           // showUserUploads: this.showUserUploads,
           showHnR: this.showHnR,
+          showLastUpdateTimeAsRelativeTime: this.showLastUpdateTimeAsRelativeTime,
           showWeek: this.showWeek,
           selectedHeaders: this.selectedHeaders,
         },
@@ -1174,7 +1179,7 @@ export default Vue.extend({
         // case this.allOpenTypes[2].type:
           return this.sites.filter(s => s.offline !== true)
               .filter((site: Site) => (site.user?.messageCount || 0) > 0)
-              .map((site: Site) => this.defaultQuickLinks(site)[0] || site.activeURL)
+              .map((site: Site) => this.defaultQuickLinks(site)[1] || site.activeURL)
               .map(s => s.href || s)
         default:
           throw new Error(`getAllUrlsByType: 未知的类型：${type}`)
