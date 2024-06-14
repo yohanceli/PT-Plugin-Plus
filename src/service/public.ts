@@ -1,8 +1,8 @@
-import md5 from "blueimp-md5";
 import * as basicContext from "basiccontext";
 import { Options, Site, Dictionary } from "@/interface/common";
 import dayjs from "dayjs";
 import { UAParser } from "ua-parser-js";
+import {MD5} from "crypto-js";
 
 class HelpFunctions {
   public isExtensionMode: boolean = false;
@@ -106,7 +106,7 @@ class HelpFunctions {
    * 获取一个编号
    */
   public getNewId(): string {
-    return md5(
+    return MD5(
       new Date().getTime().toString() + this.getRandomString()
     ).toString();
   }
@@ -267,7 +267,7 @@ class HelpFunctions {
    */
   public checkPermissions(permissions: string[]): Promise<any> {
     return new Promise<any>((resolve?: any, reject?: any) => {
-      if (chrome && chrome.permissions) {
+      if (chrome?.permissions) {
         // 查询当前权限
         chrome.permissions.contains(
           {
@@ -297,7 +297,7 @@ class HelpFunctions {
    */
   public requestPermissions(permissions: string[]): Promise<any> {
     return new Promise<any>((resolve?: any, reject?: any) => {
-      if (chrome && chrome.permissions) {
+      if (chrome?.permissions) {
         chrome.permissions.request(
           {
             permissions: permissions
@@ -367,7 +367,7 @@ class HelpFunctions {
       sites.push(...options.sites);
     }
 
-    if (options.system && options.system.publicSites) {
+    if (options.system?.publicSites) {
       sites.push(...options.system.publicSites);
     }
 
